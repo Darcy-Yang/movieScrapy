@@ -18,6 +18,7 @@ class DoubanPipeline(object):
             db = 'douban',
             user = 'root',
             passwd = 'zhinan',
+            charset = 'utf8',
             cursorclass = MySQLdb.cursors.DictCursor,
             use_unicode = True,
         )
