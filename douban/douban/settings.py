@@ -19,8 +19,8 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 
 ITEM_PIPELINES = {
   'douban.pipelines.DoubanPipeline': 300,
-  'douban.pipelines.MtimePipeline': 300,
-  'douban.pipelines.MovieFMPipeline': 300,
+  # 'douban.pipelines.MtimePipeline': 300,
+  # 'douban.pipelines.MovieFMPipeline': 300,
 }
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
