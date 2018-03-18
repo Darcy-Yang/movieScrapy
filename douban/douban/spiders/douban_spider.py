@@ -19,16 +19,16 @@ class DoubanSpider(Spider):
     movie = douban()
     for item in response.css('div.item'):
       movie['order'] = item.css('.pic em::text').extract()
-      movie['title'] = item.css('.title::text').extract()[0].encode('utf-8')
+      movie['title'] = item.css('.title::text').extract()[0].encode('utf-8').decode('latin1')
       movie['img_src'] = item.css('img::attr("src")').extract()[0]
-      info = item.css('.bd p::text').extract()[0].encode('utf-8')
+      info = item.css('.bd p::text').extract()[0].encode('utf-8').decode('latin1')
       movie['info'] = info.lstrip().rstrip()
       movie['movietype'] = item.css('.bd p').extract()[0].split('<br>')[1].split('</p>')[0].lstrip().rstrip()
       movie['star'] = item.css('.rating_num::text').extract()
-      movie['votes'] = item.css('.star span:nth-child(4)::text').extract()[0].encode('utf-8')
+      movie['votes'] = item.css('.star span:nth-child(4)::text').extract()[0].encode('utf-8').decode('latin1')
       # print movie['info'].lstrip().rstrip()
       if item.css('.inq::text'):
-        movie['quote'] = item.css('.inq::text').extract()[0].encode('utf-8')
+        movie['quote'] = item.css('.inq::text').extract()[0].encode('utf-8').decode('latin1')
       else:
         movie['quote'] = ''
       yield movie
@@ -51,7 +51,7 @@ class MtimeSpider(Spider):
     poster = douban()
     for item in response.css('h2.px14'):
       images_url = item.css('a::attr("href")').extract()[0] + 'posters_and_images/'
-      poster['title'] = item.css('a::text').extract()[0].encode('utf-8')
+      poster['title'] = item.css('a::text').extract()[0].encode('utf-8').decode('latin1')
       opener.get(images_url)
       poster['poster_url'] = opener.execute_script("return imageList[0].stagepicture[0].officialstageimage[0].img_1000")
       yield poster
@@ -72,7 +72,7 @@ class MovieFM(Spider):
       if item.css('.fm-co-cover'):
         fm['album_link'] = 'dianying.fm' + item.css('.fm-co-cover a::attr("href")').extract()[0]
         fm['album_img_url'] = item.css('.fm-co-cover a img::attr("src")').extract()[0]
-        fm['title'] = item.css('.fm-co-desc div a::text').extract()[0].encode('utf-8')
+        fm['title'] = item.css('.fm-co-desc div a::text').extract()[0].encode('utf-8').decode('latin1')
         fm['info'] = item.css('.fm-co-desc div:nth-child(3)::text').extract()[0]
         yield fm
       else: 
