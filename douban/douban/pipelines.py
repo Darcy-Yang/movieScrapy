@@ -15,7 +15,7 @@ class DoubanPipeline(object):
     def __init__(self):
         dbargs = dict(
             host = '127.0.0.1',
-            db = 'douban',
+            db = 'film',
             user = 'root',
             passwd = 'zhinan',
             charset = 'utf8',
@@ -30,7 +30,7 @@ class DoubanPipeline(object):
         return asyncItem
 
     def insert_into_douban(self, conn, item):
-        conn.execute('insert into `movie`(`order`, `title`, `img_src`, `info`, `movie_type`, `star`, `votes`, `quote`) values (%s,%s,%s,%s,%s,%s,%s,%s)',
+        conn.execute('insert into `ranks`(`order`, `title`, `img_src`, `info`, `movie_type`, `star`, `votes`, `quote`) values (%s,%s,%s,%s,%s,%s,%s,%s)',
         (item['order'],item['title'],item['img_src'],item['info'],item['movietype'],item['star'],item['votes'],item['quote']))
 
 class MtimePipeline(object):
