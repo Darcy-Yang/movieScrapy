@@ -14,11 +14,14 @@ class Demo1Item(Item):
     pass
 
 class douban(Item):
+    # 排行榜
     order = Field()
     title = Field()
     img_src = Field()
     info = Field()
-    movietype = Field()
+    time = Field()
+    area = Field()
+    type = Field()
     star = Field()
     votes = Field()
     quote = Field()

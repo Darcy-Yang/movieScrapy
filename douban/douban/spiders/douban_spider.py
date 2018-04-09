@@ -23,7 +23,10 @@ class DoubanSpider(Spider):
       movie['img_src'] = item.css('img::attr("src")').extract()[0]
       info = item.css('.bd p::text').extract()[0].encode('utf-8')
       movie['info'] = info.lstrip().rstrip()
-      movie['movietype'] = item.css('.bd p').extract()[0].split('<br>')[1].split('</p>')[0].lstrip().rstrip()
+      movieType = item.css('.bd p').extract()[0].split('<br>')[1].split('</p>')[0].lstrip().rstrip()
+      movie['time'] = movieType.encode('utf-8').split(' / ')[0]
+      movie['area'] = movieType.encode('utf-8').split(' / ')[1]
+      movie['type'] = movieType.encode('utf-8').split(' / ')[2]
       movie['star'] = item.css('.rating_num::text').extract()
       movie['votes'] = item.css('.star span:nth-child(4)::text').extract()[0].encode('utf-8')
       # print movie['info'].lstrip().rstrip()

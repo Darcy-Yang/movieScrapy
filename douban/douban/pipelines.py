@@ -17,7 +17,7 @@ class DoubanPipeline(object):
             host = '127.0.0.1',
             db = 'film',
             user = 'root',
-            passwd = 'zhinan',
+            passwd = '',
             charset = 'utf8',
             cursorclass = MySQLdb.cursors.DictCursor,
             use_unicode = True,
@@ -30,8 +30,8 @@ class DoubanPipeline(object):
         return asyncItem
 
     def insert_into_douban(self, conn, item):
-        conn.execute('insert into `ranks`(`order`, `title`, `img_src`, `info`, `movie_type`, `star`, `votes`, `quote`) values (%s,%s,%s,%s,%s,%s,%s,%s)',
-        (item['order'],item['title'],item['img_src'],item['info'],item['movietype'],item['star'],item['votes'],item['quote']))
+        conn.execute('insert into `ranks`(`order`, `title`, `img_src`, `info`, `star`, `votes`, `quote`, `time`, `area`, `type`) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+        (item['order'],item['title'],item['img_src'],item['info'],item['star'],item['votes'],item['quote'],item['time'],item['area'],item['type']))
 
 class MtimePipeline(object):
 
@@ -61,7 +61,7 @@ class MovieFMPipeline(object):
             host = '127.0.0.1',
             db = 'douban',
             user = 'root',
-            passwd = 'zhinan',
+            passwd = '',
             cursorclass = MySQLdb.cursors.DictCursor,
             use_unicode = True,
         )
