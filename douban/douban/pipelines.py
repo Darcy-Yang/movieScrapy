@@ -17,7 +17,7 @@ class DoubanPipeline(object):
             host = '127.0.0.1',
             db = 'film',
             user = 'root',
-            passwd = '',
+            passwd = 'zhinan',
             charset = 'utf8',
             cursorclass = MySQLdb.cursors.DictCursor,
             use_unicode = True,
