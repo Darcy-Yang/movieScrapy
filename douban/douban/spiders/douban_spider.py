@@ -6,6 +6,8 @@ from douban.items import douban
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+import string
+
 class DoubanSpider(Spider):
   name = 'douban'
   allowed_domains = ['movie.douban.com']
@@ -18,27 +20,56 @@ class DoubanSpider(Spider):
     # open(filename, 'wb').write(response.body)
     movie = douban()
     for item in response.css('div.item'):
-      movie['order'] = item.css('.pic em::text').extract()
-      movie['title'] = item.css('.title::text').extract()[0].encode('utf-8')
-      movie['img_src'] = item.css('img::attr("src")').extract()[0]
-      info = item.css('.bd p::text').extract()[0].encode('utf-8')
-      movie['info'] = info.lstrip().rstrip()
-      movieType = item.css('.bd p').extract()[0].split('<br>')[1].split('</p>')[0].lstrip().rstrip()
-      movie['time'] = movieType.encode('utf-8').split(' / ')[0]
-      movie['area'] = movieType.encode('utf-8').split(' / ')[1]
-      movie['type'] = movieType.encode('utf-8').split(' / ')[2]
-      movie['star'] = item.css('.rating_num::text').extract()
-      movie['votes'] = item.css('.star span:nth-child(4)::text').extract()[0].encode('utf-8')
-      # print movie['info'].lstrip().rstrip()
-      if item.css('.inq::text'):
-        movie['quote'] = item.css('.inq::text').extract()[0].encode('utf-8')
-      else:
-        movie['quote'] = ''
-      yield movie
-    if response.css('span.next a::attr("href")'):
-      next_page = response.css('span.next a::attr("href")').extract()[0]
-      next_url = response.urljoin(next_page)
-      yield scrapy.Request(next_url, callback = self.parse)
+      detail = item.css('.pic a::attr("href")').extract()[0]
+      request = scrapy.Request(response.urljoin(detail), callback = self.get_detail)
+      yield request
+      if response.css('span.next a::attr("href")'):
+        next_page = response.css('span.next a::attr("href")').extract()[0]
+        next_url = response.urljoin(next_page)
+        yield scrapy.Request(next_url, callback = self.parse)
+
+  def get_detail(self, response):
+    movie = douban()
+    for item in response.css('div#content'):
+      movie['director'] = ''
+      movie['writer'] = ''
+      movie['actor'] = ''
+      movie['type'] = ''
+      movie['time'] = ''
+      movie['run_time'] = ''
+      movie['title'] = (item.css('h1 span::text').extract()[0].encode('utf-8')).split(' ')[0]
+      movie['time'] = item.css('h1 span::text').extract()[1].encode('utf-8')
+      movie['poster'] = item.css('div#mainpic img::attr("src")').extract()[0]
+      movie['star'] = item.css('strong.rating_num::text').extract()[0]
+
+      for detail in item.css('span'):
+        if (detail.css('::attr("property")').extract()):
+          if (detail.css('::attr("property")').extract()[0] == 'v:genre'):
+            movie['type'] = movie['type'] + ' ' + detail.css('::text').extract()[0].encode('utf-8')
+          if (detail.css('::attr("property")').extract()[0] == 'v:initialReleaseDate'):
+            # 取最后一个作为时间和地区的值
+            time_and_area = (detail.css('::text').extract()[0].encode('utf-8')).split('(')
+            movie['time'] = time_and_area[0]
+            movie['area'] = time_and_area[1].split(')')[0]
+          if (detail.css('::attr("property")').extract()[0] == 'v:runtime'):
+            movie['run_time'] = movie['run_time'] + ' ' + detail.css('::text').extract()[0].encode('utf-8')
+          if (detail.css('::attr("property")').extract()[0] == 'v:votes'):
+            movie['votes'] = detail.css('::text').extract()[0]
+          if (detail.css('::attr("property")').extract()[0] == 'v:summary'):
+            summary = (detail.css('::text').extract()[0].encode('utf-8'))
+            movie['summary'] = string.strip(summary)
+
+      for index in range(len(response.css('span.attrs'))):
+        if (index == 0):
+          for detail in (response.css('span.attrs')[index]).css('a'):
+            movie['director'] = movie['director'] + ' ' + detail.css('::text').extract()[0].encode('utf-8')
+        if (index == 1):
+          for detail in (response.css('span.attrs')[index]).css('a'):
+            movie['writer'] = movie['writer'] + ' ' + detail.css('::text').extract()[0].encode('utf-8')
+        if (index == 2):
+          for detail in (response.css('span.attrs')[index]).css('a'):
+            movie['actor'] = movie['actor'] + ' ' + detail.css('::text').extract()[0].encode('utf-8')
+    yield movie
 
 class MtimeSpider(Spider):
   name = 'mtime'

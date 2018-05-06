@@ -30,8 +30,8 @@ class DoubanPipeline(object):
         return asyncItem
 
     def insert_into_douban(self, conn, item):
-        conn.execute('insert into `ranks`(`order`, `title`, `img_src`, `info`, `star`, `votes`, `quote`, `time`, `area`, `type`) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-        (item['order'],item['title'],item['img_src'],item['info'],item['star'],item['votes'],item['quote'],item['time'],item['area'],item['type']))
+        conn.execute('insert into `ranks`(`title`, `poster`, `director`, `writer`, `actor`, `star`, `votes`, `time`, `type`, `runTime`, `area`, `summary`) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+        (item['title'],item['poster'],item['director'],item['writer'],item['actor'],item['star'],item['votes'],item['time'],item['type'],item['run_time'],item['area'],item['summary']))
 
 class MtimePipeline(object):
 
